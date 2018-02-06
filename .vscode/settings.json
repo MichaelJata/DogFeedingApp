@@ -1,0 +1,5 @@
+{
+    "python.pythonPath": "C:\\Users\\michael.jata\\AppData\\Local\\Programs\\Python\\Python36\\python.exe",
+    "html-css-class-completion.includeGlobPattern": "**/static/css/*.{css,html}",
+
+}

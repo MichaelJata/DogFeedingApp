@@ -1,0 +1,195 @@
+﻿{% extends "layout.html" %} {% block body %}
+<div class="row">
+    <div class="col-md-12">
+        <form action="http://127.0.0.1:666/feed" method="POST" class="needs-validation" novalidate>
+            <div class="form-group">
+                <label for="feederNameInput">Your Name</label>
+                <input name="feederNameInput" type="text" class="form-control" id="feederNameInput" placeholder="What's your name?" required>
+                <div class="invalid-feedback">
+                    Please provide your name.
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="amountOfFoodInput">Amount of Food (g)</label>
+                <input name="amountOfFoodInput" type="number" class="form-control" id="amountOfFoodInput" placeholder="How many grams do you want to feed?"
+                    max="200" required>
+                <div class="invalid-feedback">
+                    Please provide an appropriate amount of food. The total amount is 200g
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Start feeding</button>
+        </form>
+    </div>
+</div>
+{% if add_food_result %} {% if add_food_result == "success"%}
+<div class="p-3 mb-2 bg-success text-white"> Successfully feeded {{ amount_of_food_input }} g as User {{ feeder_name_input }}</div>
+{% else %}
+<div class="p-3 mb-2 bg-danger text-white">Error: {{add_food_result}}</div>
+{% endif %} {% endif %}
+
+<div class="row">
+    <div class="col-md-4">
+        <canvas id="dailyFeedChart" width="400" height="120"></canvas>
+    </div>
+    <div class="col-md-8">
+        <canvas id="chart1" height="120"></canvas>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Amount (g)</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in feed_history %}
+                <tr>
+                    <th scope="row">{{ item["Id"] }}</th>
+                    <td>{{ item["NameOfServer"] }}</td>
+                    <td>{{ item["FoodServed"] }}</td>
+                    <td>{{ item["Timestamp"] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+<div class="row justify-content-center">
+    <ul class="pagination">
+        <li class="page-item">
+            <a class="page-link" href="#">Previous</a>
+        </li>
+        {% for n in range(pages) %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{loop.index}}">{{loop.index}}</a>
+        </li>
+        {%endfor%}
+        <li class="page-item">
+            <a class="page-link" href="#">Next</a>
+        </li>
+    </ul>
+</div>
+<script>
+    // Example starter JavaScript for disabling form submissions if there are invalid fields
+    (function () {
+        'use strict';
+        window.addEventListener('load', function () {
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            var forms = document.getElementsByClassName('needs-validation');
+            // Loop over them and prevent submission
+            var validation = Array.prototype.filter.call(forms, function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        }, false);
+    })();
+    // For a pie chart
+    var ctx = document.getElementById("dailyFeedChart").getContext('2d');
+    var feed_limit = {{feed_limit|safe}}
+    data = {
+        datasets: [{
+            data: [10, feed_limit],
+            backgroundColor: ["#28a745", "#6c757d"]
+        }],
+
+        // These labels appear in the legend and in the tooltips when hovering different arcs
+        labels: [
+            'Left',
+            'Eaten'
+        ],
+    };
+
+    options = {
+        title: {
+            display: true,
+            text: 'Total daily Food to feed'
+        },
+        responsive: true,
+        maintainAspectRatio: false
+    }
+
+    var myChart = new Chart(ctx, {
+        type: 'pie',
+        data: data,
+        options: options
+    });
+
+    var dateFormat = 'MMMM DD YYYY';
+
+    var dataNew = [{
+        t: moment('April 01 2017', dateFormat),
+        y: 200
+    },
+    {
+        t: moment('April 02 2017', dateFormat),
+        y: 250
+    },
+    {
+        t: moment('April 03 2017', dateFormat),
+        y: 270
+    }]
+
+
+    var labelsNew = [];
+    for (i = 0; i < dataNew.length; i++) {
+        date = dataNew[i].t.clone();//.add(1,"d");
+        labelsNew.push(date);
+        //labelsNew.push(date.format("MMM Do"));
+    }
+
+    var ctx = document.getElementById("chart1").getContext("2d");
+    var cfg = {
+        type: 'bar',
+        data: {
+            labels: labelsNew,
+            datasets: [{
+                label: "Food Served",
+                data: dataNew,
+                type: 'line',
+                pointRadius: 0,
+                fill: false,
+                lineTension: 0,
+                borderWidth: 2
+            }]
+        },
+        options: {
+            scales: {
+                xAxes: [{
+                    type: 'time',
+                    distribution: 'series',
+                    ticks: {
+                        source: 'labels'
+                    },
+                    time: {
+                        displayFormats: { 'day': 'DD/MM/YY' },
+                        tooltipFormat: 'DD/MM/YY',
+                        unit: 'day',
+                    }
+                }],
+                yAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Food Served (g)'
+                    }
+                }]
+            }
+        }
+    };
+    var chart = new Chart(ctx, cfg);
+
+
+</script> {% endblock %}
