@@ -1,5 +1,6 @@
 import sqlite3 as lite
 import sys
+import json
 
 
 class DataAccess(object):
@@ -14,7 +15,8 @@ class DataAccess(object):
             food_history_entry = (food_amount, server_name)
             with self.con:
                 cur = self.con.cursor()
-                cur.execute("INSERT INTO FeedHistory (FoodServed, NameOfServer) VALUES(?,?)", food_history_entry)
+                cur.execute(
+                    "INSERT INTO FeedHistory (FoodServed, NameOfServer) VALUES(?,?)", food_history_entry)
             return "success"
 
     def get_feed_history_with_columns(self, page, count):
@@ -23,7 +25,8 @@ class DataAccess(object):
             pagination = (page, count)
             self.con.row_factory = lite.Row
             cur = self.con.cursor()
-            cur.execute("SELECT * FROM  FeedHistory ORDER BY Timestamp DESC LIMIT ?,?", pagination)
+            cur.execute(
+                "SELECT * FROM  FeedHistory ORDER BY Timestamp DESC LIMIT ?,?", pagination)
             rows = cur.fetchall()
             return rows
             """SELECT * FROM  FeedHistory ORDER BY Timestamp DESC LIMIT 0,5"""
@@ -34,8 +37,29 @@ class DataAccess(object):
             cur = self.con.cursor()
             cur.execute("Select COUNT(*) from FeedHistory")
             total_amount = cur.fetchone()
-            return total_amount           
-            
+            return total_amount
+
+    def get_daily_feed_history(self):
+        """Returns the total amount of feed entries"""
+        with self.con:
+            cur = self.con.cursor()
+            cur.execute("SELECT SUM(FoodServed) as Amount, strftime('%d.%m.%Y', Timestamp) as Day from FeedHistory group by strftime('%d', Timestamp) order by Timestamp ASC limit 30")
+            rows = cur.fetchall()
+            total_amount_per_day = []
+            for row in rows:
+                total_amount_per_day.append(list(row))
+
+            jsonResult = json.dumps(total_amount_per_day)
+            return jsonResult
+
+    def get_total_foodserved_today(self):
+        """Returns the total amount of feed entries"""
+        with self.con:
+            cur = self.con.cursor()
+            cur.execute("SELECT SUM(FoodServed) from FeedHistory where Timestamp >= date('now', 'start of day')")
+            total_amount_today = cur.fetchone()
+            return total_amount_today[0]
+
     def get_feed_limit(self):
         """Returns the default feed limit per day"""
         with self.con:

@@ -18,6 +18,8 @@ def index():
     feed_history = data_access.get_feed_history_with_columns(page, items_per_page)
     amount_of_feed_entries = data_access.get_amount_of_feed_entries()
     feed_limit = data_access.get_feed_limit()
+    food_served_today = data_access.get_total_foodserved_today()
+    daily_feed_history = data_access.get_daily_feed_history()
     pages = math.ceil(amount_of_feed_entries[0] / items_per_page)
     return render_template("dashboard.html", **locals())
 
@@ -37,6 +39,8 @@ def feed():
     feed_history = data_access.get_feed_history_with_columns(page, items_per_page)
     amount_of_feed_entries = data_access.get_amount_of_feed_entries()
     feed_limit = data_access.get_feed_limit()
+    food_served_today = data_access.get_total_foodserved_today()
+    daily_feed_history = data_access.get_daily_feed_history()
     pages = math.ceil(amount_of_feed_entries[0] / items_per_page)
     return render_template("dashboard.html", **locals())
 

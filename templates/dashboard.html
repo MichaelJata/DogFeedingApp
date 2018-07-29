@@ -1,6 +1,12 @@
 ﻿{% extends "layout.html" %} {% block body %}
 <div class="row">
     <div class="col-md-12">
+        <label for="feederNameInput">Food Dispenser Fill Status</label>
+        <div class="progress">
+            <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0"
+                aria-valuemax="100"></div>
+        </div>
+        <hr>
         <form action="http://127.0.0.1:666/feed" method="POST" class="needs-validation" novalidate>
             <div class="form-group">
                 <label for="feederNameInput">Your Name</label>
@@ -99,10 +105,12 @@
     })();
     // For a pie chart
     var ctx = document.getElementById("dailyFeedChart").getContext('2d');
-    var feed_limit = {{feed_limit|safe}}
+    var feed_limit = {{ feed_limit| safe}}
+    var food_served_today = {{ food_served_today| safe}}
+    var left_food_to_serve = feed_limit - food_served_today
     data = {
         datasets: [{
-            data: [10, feed_limit],
+            data: [left_food_to_serve, food_served_today],
             backgroundColor: ["#28a745", "#6c757d"]
         }],
 
@@ -116,77 +124,43 @@
     options = {
         title: {
             display: true,
-            text: 'Total daily Food to feed'
+            text: 'Total daily food to feed in grams: ' + feed_limit
         },
         responsive: true,
         maintainAspectRatio: false
     }
 
-    var myChart = new Chart(ctx, {
+    var pieChart = new Chart(ctx, {
         type: 'pie',
         data: data,
         options: options
     });
 
-    var dateFormat = 'MMMM DD YYYY';
+    var daily_feed_history = {{ daily_feed_history| safe}}
+    console.log(daily_feed_history)
 
-    var dataNew = [{
-        t: moment('April 01 2017', dateFormat),
-        y: 200
-    },
-    {
-        t: moment('April 02 2017', dateFormat),
-        y: 250
-    },
-    {
-        t: moment('April 03 2017', dateFormat),
-        y: 270
-    }]
+    var feedHistoryLabels = daily_feed_history.map(function (e) {
+        return e[1];
+    });
+    var feedHistoryData = daily_feed_history.map(function (e) {
+        return e[0];
+    });;
 
-
-    var labelsNew = [];
-    for (i = 0; i < dataNew.length; i++) {
-        date = dataNew[i].t.clone();//.add(1,"d");
-        labelsNew.push(date);
-        //labelsNew.push(date.format("MMM Do"));
-    }
-
+    console.log(feedHistoryData)
+    console.log(feedHistoryLabels)
     var ctx = document.getElementById("chart1").getContext("2d");
     var cfg = {
-        type: 'bar',
+        type: 'line',
         data: {
-            labels: labelsNew,
+            labels: feedHistoryLabels,
             datasets: [{
-                label: "Food Served",
-                data: dataNew,
+                label: "Food Served (g)",
+                data: feedHistoryData,
                 type: 'line',
-                pointRadius: 0,
-                fill: false,
-                lineTension: 0,
+                pointRadius: 6,
+                fill: true,
                 borderWidth: 2
             }]
-        },
-        options: {
-            scales: {
-                xAxes: [{
-                    type: 'time',
-                    distribution: 'series',
-                    ticks: {
-                        source: 'labels'
-                    },
-                    time: {
-                        displayFormats: { 'day': 'DD/MM/YY' },
-                        tooltipFormat: 'DD/MM/YY',
-                        unit: 'day',
-                    }
-                }],
-                yAxes: [{
-                    scaleLabel: {
-                        display: true,
-                        labelString: 'Food Served (g)'
-                    }
-                }]
-            }
         }
     };
     var chart = new Chart(ctx, cfg);
