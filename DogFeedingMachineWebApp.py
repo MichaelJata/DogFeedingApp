@@ -21,6 +21,15 @@ def index():
     food_served_today = data_access.get_total_foodserved_today()
     daily_feed_history = data_access.get_daily_feed_history()
     pages = math.ceil(amount_of_feed_entries[0] / items_per_page)
+   
+    device_info = data_access.get_device_info()
+    fill_status_progress_class = "bg-success"
+    fill_level = int(device_info[1])
+    if(fill_level < 30):
+        fill_status_progress_class = "bg-danger"
+    elif(fill_level < 60):
+        fill_status_progress_class = "bg-warning"
+            
     return render_template("dashboard.html", **locals())
 
 

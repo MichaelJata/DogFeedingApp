@@ -1,13 +1,50 @@
 ﻿{% extends "layout.html" %} {% block body %}
 <div class="row">
     <div class="col-md-12">
-        <label for="feederNameInput">Food Dispenser Fill Status</label>
-        <div class="progress">
-            <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0"
-                aria-valuemax="100"></div>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card bg-primary mb-3 text-white" style="max-width: 18rem;">
+                    <div class="card-header">Food Dispenser Fill Status</div>
+                    <div class="card-body">
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped {{fill_status_progress_class}}" role="progressbar" style="width: {{device_info[1]}}%"
+                                aria-valuenow="{{device_info[1]}}" aria-valuemin="0" aria-valuemax="100">{{device_info[1]}}</div>
+                        </div>
+                        <p></p>
+                        <p class="card-text text-center">available capacity</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-primary mb-3 text-white" style="max-width: 18rem;">
+                    <div class="card-header">In Operation</div>
+                    <div class="card-body">
+                        <h5 class="card-title text-center">{{device_info[0]}}</h5>
+                        <p class="card-text text-center">indicates current state</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-primary mb-3 text-white" style="max-width: 18rem;">
+                    <div class="card-header">Temperature</div>
+                    <div class="card-body">
+                        <h5 class="card-title text-center">{{device_info[2]}}° C</h5>
+                        <p class="card-text text-center">(inside the dispenser)</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-primary mb-3 text-white" style="max-width: 18rem;">
+                    <div class="card-header">Humidity</div>
+                    <div class="card-body">
+                        <h5 class="card-title text-center">{{device_info[3]}} %</h5>
+                        <p class="card-text text-center">(inside the dispenser)</p>
+                    </div>
+                </div>
+            </div>
         </div>
         <hr>
-        <form action="http://127.0.0.1:666/feed" method="POST" class="needs-validation" novalidate>
+        <form action="/feed" method="POST" class="needs-validation" novalidate>
             <div class="form-group">
                 <label for="feederNameInput">Your Name</label>
                 <input name="feederNameInput" type="text" class="form-control" id="feederNameInput" placeholder="What's your name?" required>

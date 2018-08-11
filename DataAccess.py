@@ -13,11 +13,31 @@ class DataAccess(object):
             return "No values for food and server provided!"
         else:
             food_history_entry = (food_amount, server_name)
+            food_served_today = int(self.get_total_foodserved_today())
+            feed_limit = int(self.get_feed_limit())
+            if(int(food_amount) + food_served_today > feed_limit):
+                return "You are exceeding the daily feed limit for Guinness! Reduce you generosity"
             with self.con:
                 cur = self.con.cursor()
                 cur.execute(
                     "INSERT INTO FeedHistory (FoodServed, NameOfServer) VALUES(?,?)", food_history_entry)
             return "success"
+            
+    def set_fill_level(self, fill_level_percentage):
+        """Adds food to the history"""
+        with self.con:
+            cur = self.con.cursor()
+            cur.execute(
+                "update DeviceInfo set FillLevel = ?", (fill_level_percentage,))
+        return "success"
+
+    def get_device_info(self):
+        """Returns the total amount of feed entries"""
+        with self.con:
+            cur = self.con.cursor()
+            cur.execute("Select * From DeviceInfo")
+            device_info = cur.fetchone()
+            return device_info
 
     def get_feed_history_with_columns(self, page, count):
         """Returns food which has been feeded in the past"""
