@@ -4,6 +4,7 @@ import  math
 from flask import Flask, render_template, request
 import json
 from DataAccess import DataAccess
+import RPi.GPIO as GPIO
 import DogFeeder
 
 app = Flask(__name__)
@@ -16,7 +17,7 @@ def index():
         page = 0
     items_per_page = 5
     data_access = DataAccess()
-    
+
     dog_feeder = DogFeeder()
     dog_feeder.feed_dog(370)
     GPIO.cleanup()
