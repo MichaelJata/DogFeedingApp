@@ -212,7 +212,7 @@ class DogFeeder:
         self.move_steppermotor_to_start_position()
 
 
-
+"""
 try:
     dog_feeder = DogFeeder()
     dog_feeder.feed_dog(370)
@@ -223,3 +223,4 @@ try:
 
 except KeyboardInterrupt:
     GPIO.cleanup()
+    """

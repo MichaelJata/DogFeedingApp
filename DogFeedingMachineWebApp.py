@@ -16,7 +16,13 @@ def index():
         page = 0
     items_per_page = 5
     data_access = DataAccess()
+    
     dog_feeder = DogFeeder()
+    dog_feeder.feed_dog(370)
+    GPIO.cleanup()
+    dog_feeder.initialize_status_led()
+    dog_feeder.change_led_color_for_fill_level()
+
     feed_history = data_access.get_feed_history_with_columns(page, items_per_page)
     amount_of_feed_entries = data_access.get_amount_of_feed_entries()
     feed_limit = data_access.get_feed_limit()
