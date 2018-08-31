@@ -4,6 +4,7 @@ import  math
 from flask import Flask, render_template, request
 import json
 from DataAccess import DataAccess
+import DogFeeder
 
 app = Flask(__name__)
 
@@ -15,6 +16,7 @@ def index():
         page = 0
     items_per_page = 5
     data_access = DataAccess()
+    dog_feeder = DogFeeder()
     feed_history = data_access.get_feed_history_with_columns(page, items_per_page)
     amount_of_feed_entries = data_access.get_amount_of_feed_entries()
     feed_limit = data_access.get_feed_limit()
