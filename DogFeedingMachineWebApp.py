@@ -47,7 +47,7 @@ def feed():
         page = 0
     items_per_page = 5
     feeder_name_input = request.form['feederNameInput']
-    amount_of_food_input = request.form['amountOfFoodInput']
+    amount_of_food_input = int(request.form['amountOfFoodInput'])
     data_access = DataAccess()
     add_food_result = data_access.add_feed_history(amount_of_food_input, feeder_name_input)
     feed_history = data_access.get_feed_history_with_columns(page, items_per_page)
