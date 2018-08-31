@@ -19,7 +19,7 @@
                 <div class="card bg-primary mb-3 text-white" style="max-width: 18rem;">
                     <div class="card-header">In Operation</div>
                     <div class="card-body">
-                        <h5 class="card-title text-center">{{device_info[0]}}</h5>
+                        <h5 class="card-title text-center">{% if device_info[0] == 0 %} Standby {% else %} Feeding ongoing {% endif %}</h5>
                         <p class="card-text text-center">indicates current state</p>
                     </div>
                 </div>
@@ -28,7 +28,7 @@
                 <div class="card bg-primary mb-3 text-white" style="max-width: 18rem;">
                     <div class="card-header">Temperature</div>
                     <div class="card-body">
-                        <h5 class="card-title text-center">{{device_info[2]}}° C</h5>
+                        <h5 class="card-title text-center">{{device_info[2]}}° C {{climate_sensor.temperature}}</h5>
                         <p class="card-text text-center">(inside the dispenser)</p>
                     </div>
                 </div>
@@ -37,7 +37,7 @@
                 <div class="card bg-primary mb-3 text-white" style="max-width: 18rem;">
                     <div class="card-header">Humidity</div>
                     <div class="card-body">
-                        <h5 class="card-title text-center">{{device_info[3]}} %</h5>
+                        <h5 class="card-title text-center">{{device_info[3]}} % {{climate_sensor.humidity}}</h5>
                         <p class="card-text text-center">(inside the dispenser)</p>
                     </div>
                 </div>
@@ -174,7 +174,6 @@
     });
 
     var daily_feed_history = {{ daily_feed_history| safe}}
-    console.log(daily_feed_history)
 
     var feedHistoryLabels = daily_feed_history.map(function (e) {
         return e[1];
@@ -183,8 +182,6 @@
         return e[0];
     });;
 
-    console.log(feedHistoryData)
-    console.log(feedHistoryLabels)
     var ctx = document.getElementById("chart1").getContext("2d");
     var cfg = {
         type: 'line',

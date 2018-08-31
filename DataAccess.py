@@ -30,6 +30,14 @@ class DataAccess(object):
             cur.execute(
                 "update DeviceInfo set FillLevel = ?", (fill_level_percentage,))
         return "success"
+    
+    def set_operation_status(self, boolean_inOperation):
+        """Sets the operation status of the dispenser in the db"""
+        with self.con:
+            cur = self.con.cursor()
+            cur.execute(
+                "update DeviceInfo set InOperation = ?", (boolean_inOperation,))
+        return "success"
 
     def get_device_info(self):
         """Returns the total amount of feed entries"""
