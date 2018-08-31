@@ -36,7 +36,7 @@ def index():
         print(climate_sensor.humidity)
         climate_sensor.read_data_from_sensor()
         print("reading")
-        time.sleep(1)
+        time.sleep(0.4)
     print(climate_sensor.temperature)
     print(climate_sensor.humidity)
 
