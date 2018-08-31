@@ -13,7 +13,7 @@ class DataAccess(object):
             return "No values for food and server provided!"
         else:
             food_history_entry = (food_amount, server_name)
-            food_served_today = int(self.get_total_foodserved_today())
+            food_served_today = int(self.get_total_food_served_today())
             feed_limit = int(self.get_feed_limit())
             if(int(food_amount) + food_served_today > feed_limit):
                 return "You are exceeding the daily feed limit for Guinness! Reduce you generosity"
@@ -72,13 +72,16 @@ class DataAccess(object):
             jsonResult = json.dumps(total_amount_per_day)
             return jsonResult
 
-    def get_total_foodserved_today(self):
+    def get_total_food_served_today(self):
         """Returns the total amount of feed entries"""
         with self.con:
             cur = self.con.cursor()
             cur.execute("SELECT SUM(FoodServed) from FeedHistory where Timestamp >= date('now', 'start of day')")
             total_amount_today = cur.fetchone()
-            return total_amount_today[0]
+            if(total_amount_today[0] is None):
+                return 0
+            else:
+                return total_amount_today[0]
 
     def get_feed_limit(self):
         """Returns the default feed limit per day"""
