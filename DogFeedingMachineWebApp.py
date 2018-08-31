@@ -5,7 +5,7 @@ from flask import Flask, render_template, request
 import json
 from DataAccess import DataAccess
 import RPi.GPIO as GPIO
-import DogFeeder
+from DogFeeder import DogFeeder
 
 app = Flask(__name__)
 
